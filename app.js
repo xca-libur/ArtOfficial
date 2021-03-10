@@ -21,9 +21,8 @@ function init() {
   client.loadEvents('./src/events');
   client.loadCommands('./src/commands');
   client.loadTopics('./data/trivia');
-  client.login(process.env.token);
 }
 
 init();
-
+client.login(process.env.token);
 process.on('unhandledRejection', err => client.logger.error(err));
