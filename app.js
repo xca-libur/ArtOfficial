@@ -24,5 +24,5 @@ function init() {
 }
 
 init();
-client.login(process.env.token);
+client.login(process.env.TOKEN);
 process.on('unhandledRejection', err => client.logger.error(err));
