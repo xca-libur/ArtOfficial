@@ -1,23 +1,31 @@
 const Command = require('../Command.js');
-const snekfetch = require('snekfetch');
+const { MessageEmbed } = require('discord.js');
+const fetch = require('node-fetch');
 
 module.exports = class DogFactCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'dogfact',
-      usage: '',
+      aliases: ['df'],
+      usage: 'dogfact',
       description: 'Says a random dog fact.',
-      type: 'fun'
+      type: client.types.FUN
     });
   }
   async run(message) {
     try {
-      const res = (await snekfetch.get('https://dog-api.kinduff.com/api/facts')).body.facts[0];
-      message.channel.send(res);
-    }
-    catch (err) {
-      message.client.logger.error(err.message);
-      message.channel.send(`Sorry ${message.member}, something went wrong. Please try again in a few seconds.`);
+      const res = await fetch('https://dog-api.kinduff.com/api/facts');
+      const fact = (await res.json()).facts[0];
+      const embed = new MessageEmbed()
+        .setTitle('🐶  Dog Fact  🐶')
+        .setDescription(fact)
+        .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+        .setTimestamp()
+        .setColor(message.guild.me.displayHexColor);
+      message.channel.send(embed);
+    } catch (err) {
+      message.client.logger.error(err.stack);
+      this.sendErrorMessage(message, 1, 'Please try again in a few seconds', err.message);
     }
   }
 };

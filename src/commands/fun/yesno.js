@@ -1,28 +1,35 @@
 const Command = require('../Command.js');
-const Discord = require('discord.js');
-const snekfetch = require('snekfetch');
+const { MessageEmbed } = require('discord.js');
+const fetch = require('node-fetch');
 
 module.exports = class YesNoCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'yesno',
-      usage: '',
+      aliases: ['yn'],
+      usage: 'yesno',
       description: 'Fetches a gif of a yes or a no.',
-      type: 'fun'
+      type: client.types.FUN
     });
   }
   async run(message) {
     try {
-      const res = (await snekfetch.get('http://yesno.wtf/api/')).body;
-      const embed = new Discord.RichEmbed()
-        .setAuthor(res.answer + '!')
-        .setImage(res.image)
+      const res = await (await fetch('http://yesno.wtf/api/')).json();
+      let answer = message.client.utils.capitalize(res.answer);
+      if (answer === 'Yes') answer = '👍  ' + answer + '!  👍';
+      else if (answer === 'No') answer = '👎  ' + answer + '!  👎';
+      else answer = '👍  ' + answer + '...  👎';
+      const img = res.image;
+      const embed = new MessageEmbed()
+        .setTitle(answer)
+        .setImage(img)
+        .setFooter(message.member.displayName,  message.author.displayAvatarURL({ dynamic: true }))
+        .setTimestamp()
         .setColor(message.guild.me.displayHexColor);
       message.channel.send(embed);
-    }
-    catch (err) {
-      message.client.logger.error(err.message);
-      message.channel.send(`Sorry ${message.member}, something went wrong. Please try again in a few seconds.`);
+    } catch (err) {
+      message.client.logger.error(err.stack);
+      this.sendErrorMessage(message, 1, 'Please try again in a few seconds', err.message);
     }
   }
 };
