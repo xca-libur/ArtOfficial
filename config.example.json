@@ -1,8 +1,8 @@
 {
   "token": "your_token_here",
-  "ownerId": "your_ID_here",
-  "bugReportChannelId": "bug_report_channel_ID_here",
-  "feedbackChannelId": "feedback_channel_ID_here",
+  "ownerId": "591558773953396739",
+  "bugReportChannelId": "819201668066967640",
+  "feedbackChannelId": "819201668066967641",
   "serverLogId": "server_log_ID_here",
   "apiKeys": {
     "catApi": "your_API_key_here",
